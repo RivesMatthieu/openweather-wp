@@ -1,0 +1,76 @@
+:root {
+    --openweather-orange : #eb6e4b;
+    --openweather-black : #48484a;
+}
+
+.flex-parent-openweather {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    font-family: 'Roboto', sans-serif !important;
+    width: 20%;
+}
+
+.flex-inline-openweather {
+    display: flex; 
+    align-items:center; 
+}
+
+.flex-wrap-openweather {
+    flex-wrap: wrap;
+}
+
+.description-openweather {
+    color: var(--openweather-black); 
+    font-weight: 500;
+}
+
+.wind-openweather, .pressure-openweather, .humidity-openweather, .visibility-openweather {
+    padding: 0 20px;
+    font-weight: 400;
+    font-size: 15px; 
+}
+
+.pressure-openweather:before {
+    content: "\f3fd";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--openweather-black);
+}
+.wind-openweather:before {
+    content: "\f124";
+    display: inline-block;
+    transform: rotate(314deg) !important;
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--openweather-black);
+}
+
+.datetime-openweather {
+    color: var(--openweather-orange);
+    font-weight: 400 !important;
+    font-size: 14px;
+    text-transform: uppercase
+}
+
+.zone-openweather {
+    font-size: 27px;
+    font-weight: 500;
+    color: var(--openweather-black);
+}
+
+.flex-inline-openweather.flex-wrap-openweather {
+    position: relative;
+}
+
+.flex-inline-openweather.flex-wrap-openweather:before {
+    content: ''; 
+    height: 100%; 
+    width: 2px; 
+    background-color: var(--openweather-orange); 
+    position: absolute;
+    left: 0; 
+}

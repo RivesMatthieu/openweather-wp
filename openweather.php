@@ -12,7 +12,6 @@ define( 'OPENWEATHER_PATH', plugin_dir_path( __FILE__ ) );
 
 require_once( OPENWEATHER_PATH . 'admin/class-openweather-admin.php');
 
-
 add_action('wp_enqueue_scripts', 'openweather_style');
 
 function openweather_style() {
@@ -29,17 +28,22 @@ class Openweather
 
     private $lang;
 
-    private array $data;
+    private $data;
 
     public function __construct(  )
     {
+       
+
         $this->get_key();
 
         $this->hook_wp();
 
         $this->setup_data();
 
-        $this->get_data(  );
+        $this->get_data();
+
+        $this->get_location(31500, 'fr');
+
     }
 
     public function hook_wp()
@@ -52,6 +56,13 @@ class Openweather
    {
         $cdn = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />';
         echo $cdn;
+   }
+
+   public function get_location( int $zip, string $lang ) {
+        include OPENWEATHER_PATH . 'public/openweather-pays-list.php';
+        $lang = strtolower($lang);
+        $content = $lang . '////' . $zip;
+        echo $content;
    }
 
     public function  get_key()

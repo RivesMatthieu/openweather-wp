@@ -22,7 +22,7 @@ class Openweather
 {
     private $url;
 
-    private $zip;
+    private $city;
 
     private $api_key;
 
@@ -72,9 +72,31 @@ class Openweather
         return $this->api_key;
     }
 
+    public function display_weather( $param, $content )
+    {
+        $this->city = $content;
+        $append  = '<div class="flex-parent-openweather">';
+        $append .= '<span class="datetime-openweather">'. $this->data['date'] . ', ' . $this->data['hours'] .'</span>';
+        $append .= '<span class="zone-openweather">' . $this->city .', ' . strtoupper($this->lang) .  '</span>';
+        $append .= '<div class="flex-inline-openweather">';
+        $append .= '<img src="http://openweathermap.org/img/wn/'. $this->data['icon'] .'.png"</span>';
+        $append .= '<span class="temp-openweather">'. $this->data['temp'] .'°C</span>';
+        $append .= '</div>';
+        $append .= '<span class="description-openweather">Ressentie : '. $this->data['feels_like'] . '°C, ' . ucfirst($this->data['description']) .'</span>';
+        $append .= '<div class="flex-inline-openweather flex-wrap-openweather">';
+        $append .= '<span class="wind-openweather">'. $this->data['wind'] .'m/s</span>';
+        $append .= '<span class="pressure-openweather">' . $this->data['pressure'] . 'hPa</span>';
+        $append .= '<span class="humidity-openweather">Humidité :' . $this->data['humidity'] . '%</span>';
+        $append .= '<span class="visibility-openweather">Visibilité :' . $this->data['visibility'] . 'Km</span>';
+        $append .= '</div>';
+        $append .= '</div>';
+        $append .= '<style>.wind-openweather:before {transform: rotate(' . ( 314 - $this->data['deg'] ) . 'deg) !important}</style>';
+        var_dump( $this->data['deg'] );
+        return $append;
+    } 
+
     public function setup_data()
     {
-        $this->zip = '31500';
         $this->lang = 'fr';
         // $this->url = "http://api.openweathermap.org/data/2.5/weather?zip={$this->zip},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
         $this->url = "http://api.openweathermap.org/data/2.5/weather?q={$this->city},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
@@ -117,28 +139,6 @@ class Openweather
         curl_close($curl);
     } 
 
-    public function display_weather( $param, $content )
-    {
-        $this->city = $content;
-        $append  = '<div class="flex-parent-openweather">';
-        $append .= '<span class="datetime-openweather">'. $this->data['date'] . ', ' . $this->data['hours'] .'</span>';
-        $append .= '<span class="zone-openweather">' . $this->city .', ' . strtoupper($this->lang) .  '</span>';
-        $append .= '<div class="flex-inline-openweather">';
-        $append .= '<img src="http://openweathermap.org/img/wn/'. $this->data['icon'] .'.png"</span>';
-        $append .= '<span class="temp-openweather">'. $this->data['temp'] .'°C</span>';
-        $append .= '</div>';
-        $append .= '<span class="description-openweather">Ressentie : '. $this->data['feels_like'] . '°C, ' . ucfirst($this->data['description']) .'</span>';
-        $append .= '<div class="flex-inline-openweather flex-wrap-openweather">';
-        $append .= '<span class="wind-openweather">'. $this->data['wind'] .'m/s</span>';
-        $append .= '<span class="pressure-openweather">' . $this->data['pressure'] . 'hPa</span>';
-        $append .= '<span class="humidity-openweather">Humidité :' . $this->data['humidity'] . '%</span>';
-        $append .= '<span class="visibility-openweather">Visibilité :' . $this->data['visibility'] . 'Km</span>';
-        $append .= '</div>';
-        $append .= '</div>';
-        $append .= '<style>.wind-openweather:before {transform: rotate(' . ( 314 - $this->data['deg'] ) . 'deg) !important}</style>';
-        var_dump( $this->data['deg'] );
-        return $append;
-    } 
 }
 
 if( is_admin() )

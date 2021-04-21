@@ -32,38 +32,27 @@ class Openweather
 
     public function __construct(  )
     {
-       
+       $this->get_key();
 
-        $this->get_key();
+       $this->hook_wp();
 
-        $this->hook_wp();
+       $this->setup_data();
 
-        $this->setup_data();
-
-        $this->get_data();
-
-        // $this->get_location(31500, 'fr');
+       $this->get_data();
 
     }
 
     public function hook_wp()
-   {
+    {
        add_shortcode('openweather', array( $this, 'display_weather') );
        add_action('wp_head', array( $this, 'cdn_fontawesome' ) );
-   } 
+    } 
 
    public function cdn_fontawesome()
    {
         $cdn = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />';
         echo $cdn;
    }
-
-//    public function get_location( int $zip, string $lang ) {
-//         include OPENWEATHER_PATH . 'public/openweather-pays-list.php';
-//         $lang = strtolower($lang);
-//         $content = $lang . '////' . $zip;
-//         echo $content;
-//    }
 
     public function  get_key()
     {
@@ -91,19 +80,17 @@ class Openweather
         $append .= '</div>';
         $append .= '</div>';
         $append .= '<style>.wind-openweather:before {transform: rotate(' . ( 314 - $this->data['deg'] ) . 'deg) !important}</style>';
-        var_dump( $this->data['deg'] );
         return $append;
     } 
 
     public function setup_data()
     {
         $this->lang = 'fr';
-        // $this->url = "http://api.openweathermap.org/data/2.5/weather?zip={$this->zip},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
         $this->url = "http://api.openweathermap.org/data/2.5/weather?q={$this->city},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
         return $this->url;
     }
 
-    public function get_data(  )
+    public function get_data()
     {
         $curl = curl_init( $this->url );
         curl_setopt_array( $curl, [
@@ -116,9 +103,6 @@ class Openweather
             return null;
         } else {
             $data = json_decode( $data, true );
-            // echo '<pre>';
-            // var_dump($data);
-            // echo '</pre>';
             setlocale (LC_TIME, 'fr_FR.utf8','fra'); 
             $this->data = [
                 'feels_like'    => ( ( intval($data['main']['feels_like']) - 273.15 ) * 100 ) / 100,
@@ -133,7 +117,6 @@ class Openweather
                 'deg'           => $data['wind']['deg'],
                 'visibility'    => number_format( ( intval($data['visibility']) * 1 ) )  
             ];
-            // var_dump($this->data['date']); 
             return $this->data;
         } 
         curl_close($curl);

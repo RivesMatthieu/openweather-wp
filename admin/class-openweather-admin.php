@@ -7,8 +7,6 @@ class Openweather_Admin {
         add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
         add_action( 'admin_init', array( $this, 'page_init' ) );
 
-        require_once( OPENWEATHER_PATH . 'public/class-opennweater-public.php');
-
     }
 
     public function add_plugin_page()

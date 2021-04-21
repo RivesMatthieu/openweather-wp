@@ -58,12 +58,12 @@ class Openweather
         echo $cdn;
    }
 
-   public function get_location( int $zip, string $lang ) {
-        include OPENWEATHER_PATH . 'public/openweather-pays-list.php';
-        $lang = strtolower($lang);
-        $content = $lang . '////' . $zip;
-        echo $content;
-   }
+//    public function get_location( int $zip, string $lang ) {
+//         include OPENWEATHER_PATH . 'public/openweather-pays-list.php';
+//         $lang = strtolower($lang);
+//         $content = $lang . '////' . $zip;
+//         echo $content;
+//    }
 
     public function  get_key()
     {
@@ -72,16 +72,25 @@ class Openweather
         return $this->api_key;
     }
 
+    public function setup_data()
+    {
+        $this->zip = '31500';
+        $this->lang = 'fr';
+        // $this->url = "http://api.openweathermap.org/data/2.5/weather?zip={$this->zip},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
+        $this->url = "http://api.openweathermap.org/data/2.5/weather?q={$this->city},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
+        return $this->url;
+    }
+
     public function get_data(  )
     {
         $curl = curl_init( $this->url );
-        curl_setopt_array($curl, [
+        curl_setopt_array( $curl, [
             CURLOPT_CAINFO          => CURLOPT_CAINFO, __DIR__ . DIRECTORY_SEPARATOR . 'cert.cer',
             CURLOPT_RETURNTRANSFER  => true,
             CURLOPT_TIMEOUT         => 1
         ]);
         $data = curl_exec( $curl );
-        if($data === false || curl_getinfo($curl, CURLINFO_HTTP_CODE !== 200 )) {
+        if( $data === false || curl_getinfo( $curl, CURLINFO_HTTP_CODE !== 200 )) {
             return null;
         } else {
             $data = json_decode( $data, true );
@@ -90,8 +99,8 @@ class Openweather
             // echo '</pre>';
             setlocale (LC_TIME, 'fr_FR.utf8','fra'); 
             $this->data = [
-                'feels_like'    => ( (intval($data['main']['feels_like']) - 273.15) * 100 ) / 100,
-                'temp'          => ( (intval($data['main']['temp']) - 273.15) * 100 ) / 100,
+                'feels_like'    => ( ( intval($data['main']['feels_like']) - 273.15 ) * 100 ) / 100,
+                'temp'          => ( ( intval($data['main']['temp']) - 273.15 ) * 100 ) / 100,
                 'description'   => $data['weather'][0]['description'],
                 'icon'          => $data['weather'][0]['icon'],
                 'hours'         => date("H:i", strtotime('+2 hours')),
@@ -100,29 +109,20 @@ class Openweather
                 'pressure'      => $data['main']['pressure'],
                 'wind'          => $data['wind']['speed'],
                 'deg'           => $data['wind']['deg'],
-                'visibility'    => number_format( ( intval($data['visibility'] ) * 1 ) )  
+                'visibility'    => number_format( ( intval($data['visibility']) * 1 ) )  
             ];
             // var_dump($this->data['date']); 
             return $this->data;
         } 
         curl_close($curl);
-    }  
+    } 
 
-    public function setup_data()
+    public function display_weather( $param, $content )
     {
-        $this->zip = '31500';
-        $this->lang = 'fr';
-        $this->url = "http://api.openweathermap.org/data/2.5/weather?zip={$this->zip},{$this->lang}&lang={$this->lang}&appid={$this->api_key}";
-        // var_dump($this->url);
-        return $this->url;
-    }
-
-    public function display_weather( )
-    {
-        // $content = $this->zip; 
+        $this->city = $content;
         $append  = '<div class="flex-parent-openweather">';
         $append .= '<span class="datetime-openweather">'. $this->data['date'] . ', ' . $this->data['hours'] .'</span>';
-        $append .= '<span class="zone-openweather">City, Pays</span>';
+        $append .= '<span class="zone-openweather">' . $this->city .', ' . strtoupper($this->lang) .  '</span>';
         $append .= '<div class="flex-inline-openweather">';
         $append .= '<img src="http://openweathermap.org/img/wn/'. $this->data['icon'] .'.png"</span>';
         $append .= '<span class="temp-openweather">'. $this->data['temp'] .'°C</span>';
@@ -135,9 +135,10 @@ class Openweather
         $append .= '<span class="visibility-openweather">Visibilité :' . $this->data['visibility'] . 'Km</span>';
         $append .= '</div>';
         $append .= '</div>';
-        $append .= '<style>.wind-openweather:before {transform: rotate(' . ( 314 + $this->data['deg'] ) . 'deg) !important}</style>';
-        return $append; 
-    }
+        $append .= '<style>.wind-openweather:before {transform: rotate(' . ( 314 - $this->data['deg'] ) . 'deg) !important}</style>';
+        var_dump( $this->data['deg'] );
+        return $append;
+    } 
 }
 
 if( is_admin() )

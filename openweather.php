@@ -42,7 +42,7 @@ class Openweather
 
         $this->get_data();
 
-        $this->get_location(31500, 'fr');
+        // $this->get_location(31500, 'fr');
 
     }
 
